@@ -14,3 +14,11 @@ export interface UserEntity {
   username: string
   password: string
 }
+
+export interface GoogleApiCredentialProps {
+  privateKeyId: string
+  privateKey: string
+  clientEmail: string
+  clientId: string
+  clientCertUrl: string
+}
