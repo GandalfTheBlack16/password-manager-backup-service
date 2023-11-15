@@ -3,5 +3,8 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   coverageDirectory: 'test/coverage',
-  coverageProvider: 'v8'
+  coverageProvider: 'v8',
+  setupFiles: [
+    './test/setupJest.ts'
+  ]
 }
