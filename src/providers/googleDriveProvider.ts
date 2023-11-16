@@ -29,14 +29,14 @@ const loadProperties = (): GoogleApiCredentialProps => {
 
   return {
     privateKeyId,
-    privateKey,
+    privateKey: privateKey.replace(/\\n/g, '\n'),
     clientEmail,
     clientId,
     clientCertUrl
   }
 }
 
-export const GoogleDriveProviderBuilder = async (): Promise<drive_v3.Drive> => {
+export const googleDriveProviderBuilder = async (): Promise<drive_v3.Drive> => {
   const {
     privateKeyId,
     privateKey,

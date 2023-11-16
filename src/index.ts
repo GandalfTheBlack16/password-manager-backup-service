@@ -1,7 +1,8 @@
 import { config } from 'dotenv'
-import { GoogleDriveProviderBuilder } from './providers/googleDriveProvider'
-import { GoogleDriveRepository } from './repositories/googleDriveRepository'
-import { fetchUserList } from './services/userBackupService'
+import { googleDriveProviderBuilder } from './providers/googleDriveProvider'
+import { GoogleDriveService } from './services/googleDriveService'
+import { getMongoClient } from './providers/mongoProvider'
+import { MongoRepository } from './repositories/mongoRepository'
 
 config()
 
@@ -16,12 +17,15 @@ main()
   })
 
 async function main (): Promise<void> {
-  const googleDriveProvider = await GoogleDriveProviderBuilder()
-  const googleDriveRepository = new GoogleDriveRepository(googleDriveProvider)
+  const mongoClient = await getMongoClient()
+  const userRepository = new MongoRepository(mongoClient, 'users')
+  const userList = await userRepository.findDocuments()
+  console.log(userList)
 
-  const userList = await fetchUserList()
-  if (userList.length > 0) {
-    const timestamp = Date.now()
-    await googleDriveRepository.uploadJsonFile(userList, `users-${timestamp}.json`)
-  }
+  // const googleDriveProvider = await googleDriveProviderBuilder()
+  // const googleDriveRepository = new GoogleDriveService(googleDriveProvider)
+  // const timestamp = Date.now()
+  // await googleDriveRepository.uploadJsonFile({ prueba: 'test' }, `users-${timestamp}.json`)
+  // const list = await googleDriveRepository.getFilesByName('users')
+  // console.log(list)
 }
