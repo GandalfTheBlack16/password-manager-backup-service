@@ -1,8 +1,3 @@
-export enum JobReturnCodes {
-  SUCCESS = 0,
-  API_COMMUNICATION_ERROR = 1,
-}
-
 export interface ApiCredentials {
   username: string
   password: string

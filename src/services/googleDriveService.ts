@@ -2,6 +2,7 @@ import { type drive_v3 } from 'googleapis'
 import { EnvVarNotFoundException } from '../exceptions/EnvironmentExceptions'
 import { ApiDeleteException, ApiFetchException, ApiUploadException } from '../exceptions/ApiExceptions'
 import { type GoogleApiFileEntity } from '../types'
+import { logger } from '../providers/loggerProvider'
 
 export class GoogleDriveService {
   constructor (
@@ -9,6 +10,7 @@ export class GoogleDriveService {
   ) {}
 
   async uploadJsonFile (content: any, fileName: string): Promise<string | undefined> {
+    logger.info(`Uploading file ${fileName} to Google Drive...`)
     const parentDirectory = process.env.DRIVE_TARGET_FOLDER_ID
     if (parentDirectory == null) {
       throw new EnvVarNotFoundException('Environment variable "DRIVE_TARGET_FOLDER_ID" is not defined')

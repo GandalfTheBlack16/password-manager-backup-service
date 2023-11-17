@@ -1,6 +1,7 @@
 import { type Db, MongoClient } from 'mongodb'
 import { DatabaseConnectionException } from '../exceptions/DatabaseExceptions'
 import { config } from 'dotenv'
+import { logger } from './loggerProvider'
 
 config()
 
@@ -19,7 +20,7 @@ const client = new MongoClient(url, {
 export async function getMongoClient (): Promise<Db> {
   try {
     await client.connect()
-    console.log(`Connected to ${url}`)
+    logger.info(`Connected to ${url}`)
     return client.db(database)
   } catch (error) {
     throw new DatabaseConnectionException(`Cannot perform database connection to ${url}: ${(error as Error).stack}`)
@@ -29,7 +30,7 @@ export async function getMongoClient (): Promise<Db> {
 export async function mongoDisconnect (): Promise<void> {
   try {
     await client.close()
-    console.log(`Disconnected from ${url}`)
+    logger.info(`Disconnected from ${url}`)
   } catch (error) {
     throw new DatabaseConnectionException(`Cannot disconnect from database ${url}: ${(error as Error).stack}`)
   }
