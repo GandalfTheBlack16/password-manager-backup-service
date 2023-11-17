@@ -1,6 +1,6 @@
 import { type drive_v3 } from 'googleapis'
 import { EnvVarNotFoundException } from '../exceptions/EnvironmentExceptions'
-import { ApiUploadException } from '../exceptions/ApiExceptions'
+import { ApiDeleteException, ApiFetchException, ApiUploadException } from '../exceptions/ApiExceptions'
 import { type GoogleApiFileEntity } from '../types'
 
 export class GoogleDriveService {
@@ -54,7 +54,17 @@ export class GoogleDriveService {
       })
       return fileList
     } catch (error) {
-      throw new ApiUploadException(`Error fetching files from Drive. Cause: ${(error as Error).stack}`)
+      throw new ApiFetchException(`Error fetching files from Drive. Cause: ${(error as Error).stack}`)
+    }
+  }
+
+  async removeFileById (id: string): Promise<void> {
+    try {
+      await this.googleDriveProvider.files.delete({
+        fileId: id
+      })
+    } catch (error) {
+      throw new ApiDeleteException(`Error deleting file ${id} from Drive. Cause: ${(error as Error).stack}`)
     }
   }
 }
