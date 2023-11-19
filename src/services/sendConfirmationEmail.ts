@@ -47,7 +47,7 @@ export const sendConfirmationEmail = async (users: number, vaults: number, date:
 
 const setHtmlContent = (users: number, vaults: number, date: string): string => {
   return `
-    <div style="background-color: #133d64; color: white; padding: 2rem; font-family: Poppins,sans-serif; width: 30%; border-radius: 10px;">
+    <div style="background-color: #133d64; color: white; padding: 2rem; font-family: Poppins,sans-serif; width: fit-content; border-radius: 10px;">
         <img src="https://password-manager.up.railway.app/assets/logo-no-background-0210caf7.png" alt="password-manager-logo" width="350px">
         <h1>Backup on ${date}</h1>
         <h2>Users proccessed: ${users}</h2>
