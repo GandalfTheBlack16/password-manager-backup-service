@@ -12,6 +12,7 @@ export const sendConfirmationEmail = async (users: number, vaults: number, date:
   const content = setHtmlContent(users, vaults, formattedDate)
   const headers = new Headers()
   headers.set('Content-type', 'application/json')
+  logger.debug(`Sending email POST request to ${endpoint}`)
   try {
     const response = await fetch(endpoint, {
       method: 'POST',
