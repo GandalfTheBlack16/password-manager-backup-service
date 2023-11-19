@@ -5,20 +5,30 @@ import { getMongoClient, mongoDisconnect } from './providers/mongoProvider'
 import { MongoRepository } from './repositories/mongoRepository'
 import { type UserEntity, type VaultEntity } from './types'
 import { logger } from './providers/loggerProvider'
+import { sendConfirmationEmail } from './services/sendConfirmationEmail'
+import { SendEmailException, UnknownEmailException } from './exceptions/ApiExceptions'
 
 config()
 
 main()
-  .then(() => {
+  .then(async ({ users, vaults, date }) => {
     logger.info('Backup process finished succesfully')
+    logger.info('Sending confirmation email...')
+    await sendConfirmationEmail(users, vaults, date)
+  })
+  .then(() => {
     process.exit(0)
   })
   .catch((err) => {
     logger.error(err)
+    if (err instanceof SendEmailException || err instanceof UnknownEmailException) {
+      logger.warn('Confirmation email could not send to some recipients but backup process finished successfully')
+      process.exit(0)
+    }
     process.exit(1)
   })
 
-async function main (): Promise<void> {
+async function main (): Promise<{ users: number, vaults: number, date: Date }> {
   const mongoClient = await getMongoClient()
   const googleDriveProvider = await googleDriveProviderBuilder()
 
@@ -36,4 +46,10 @@ async function main (): Promise<void> {
   const timestamp = Date.now()
   await googleDriveService.uploadJsonFile(userList, `users-${timestamp}.json`)
   await googleDriveService.uploadJsonFile(vaultList, `vaults-${timestamp}.json`)
+
+  return {
+    users: userList.length,
+    vaults: vaultList.length,
+    date: new Date(timestamp)
+  }
 }

@@ -1,7 +1,10 @@
+import { config } from 'dotenv'
 import { createLogger, format, transports } from 'winston'
 
+config()
+
 export const logger = createLogger({
-  level: 'info',
+  level: process.env.LOGGER_LEVEL ?? 'info',
   format: format.colorize(),
   transports: [
     new transports.Console({
