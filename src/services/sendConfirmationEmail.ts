@@ -36,6 +36,7 @@ export const sendConfirmationEmail = async (users: number, vaults: number, date:
     }
     logger.info(`Email sended to ${data.addresses}`)
   } catch (error) {
+    logger.debug(error)
     if (error instanceof SendEmailException) {
       throw error
     }
