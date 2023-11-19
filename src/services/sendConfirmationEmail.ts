@@ -25,6 +25,7 @@ export const sendConfirmationEmail = async (users: number, vaults: number, date:
     const data = await response.json()
     logger.debug(JSON.stringify(data))
     if (!response.ok) {
+      logger.debug(JSON.stringify(response))
       if (response.status === 404) {
         throw new SendEmailException(`Could not send email because of invalid recipients: ${data.adresses}`)
       }
@@ -36,7 +37,6 @@ export const sendConfirmationEmail = async (users: number, vaults: number, date:
     }
     logger.info(`Email sended to ${data.addresses}`)
   } catch (error) {
-    logger.debug(error)
     if (error instanceof SendEmailException) {
       throw error
     }
