@@ -11,10 +11,10 @@ import { SendEmailException, UnknownEmailException } from './exceptions/ApiExcep
 config()
 
 main()
-  .then(async ({ users, vaults, date }) => {
+  .then(async ({ users, vaults, credentials, date }) => {
     logger.info('Backup process finished succesfully')
     logger.info('Sending confirmation email...')
-    await sendConfirmationEmail(users, vaults, date)
+    await sendConfirmationEmail(users, vaults, credentials, date)
   })
   .then(() => {
     process.exit(0)
@@ -28,18 +28,19 @@ main()
     process.exit(1)
   })
 
-async function main (): Promise<{ users: number, vaults: number, date: Date }> {
+async function main (): Promise<{ users: number, vaults: number, credentials: number, date: Date }> {
   const mongoClient = await getMongoClient()
   const googleDriveProvider = await googleDriveProviderBuilder()
 
   const userRepository = new MongoRepository(mongoClient, 'users')
   logger.info('Fetching users data...')
   const userList = await userRepository.findDocuments() as UserEntity[]
-  logger.info(`Fetched data from ${userList.length} users!`)
+  logger.info(`Fetched data from ${userList.length} users`)
   const vaultRepository = new MongoRepository(mongoClient, 'vaults')
   logger.info('Fetching vaults data...')
   const vaultList = await vaultRepository.findDocuments() as VaultEntity[]
-  logger.info(`Fetched data from ${vaultList.length} vaults!`)
+  const credentials = vaultList.map(vault => vault.credentials.length).reduce((cont, a) => cont + a, 0)
+  logger.info(`Fetched ${credentials} credential data from ${vaultList.length} vaults`)
   await mongoDisconnect()
 
   const googleDriveService = new GoogleDriveService(googleDriveProvider)
@@ -50,6 +51,7 @@ async function main (): Promise<{ users: number, vaults: number, date: Date }> {
   return {
     users: userList.length,
     vaults: vaultList.length,
+    credentials,
     date: new Date(timestamp)
   }
 }
