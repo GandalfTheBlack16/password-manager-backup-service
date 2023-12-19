@@ -4,12 +4,12 @@ import { logger } from '../providers/loggerProvider'
 
 config()
 
-export const sendConfirmationEmail = async (users: number, vaults: number, date: Date): Promise<void> => {
+export const sendConfirmationEmail = async (users: number, vaults: number, credentials: number, date: Date): Promise<void> => {
   const endpoint = process.env.SEND_EMAIL_SERVICE_ENDPOINT ?? 'http://localhost:3000/email'
   const recipients = process.env.SEND_EMAIL_RECIPIENTS?.split(',')
   const subject = 'Password-manager backup performed successfully'
   const formattedDate = date.toLocaleString().replace(', ', ' at ')
-  const content = setHtmlContent(users, vaults, formattedDate)
+  const content = setHtmlContent(users, vaults, credentials, formattedDate)
   const headers = new Headers()
   headers.set('Content-type', 'application/json')
   logger.debug(`Sending email POST request to ${endpoint}`)
@@ -45,13 +45,14 @@ export const sendConfirmationEmail = async (users: number, vaults: number, date:
   }
 }
 
-const setHtmlContent = (users: number, vaults: number, date: string): string => {
+const setHtmlContent = (users: number, vaults: number, credentials: number, date: string): string => {
   return `
     <div style="background-color: #133d64; color: white; padding: 2rem; font-family: Poppins,sans-serif; width: fit-content; border-radius: 10px;">
         <img src="https://password-manager.up.railway.app/assets/logo-no-background-0210caf7.png" alt="password-manager-logo" width="350px">
         <h1>Backup on ${date}</h1>
         <h2>Users proccessed: ${users}</h2>
         <h2>Vaults proccessed: ${vaults}</h2>
+        <h2>Total credentials proccessed: ${credentials}</h2>
     </div>
     `
 }
